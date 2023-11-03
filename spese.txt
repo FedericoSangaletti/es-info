@@ -1,0 +1,159 @@
+CREATE TABLE categorie (
+    nome VARCHAR(50) PRIMARY KEY
+);
+ 
+CREATE TABLE tags (
+    nome VARCHAR(50) PRIMARY KEY
+);
+ 
+CREATE TABLE spese (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    info TEXT NOT NULL,
+    importo FLOAT NOT NULL,
+    data DATE NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    FOREIGN KEY (categoria) REFERENCES categorie(nome)
+);
+ 
+CREATE TABLE spese_tags (
+    spesa_id INTEGER NOT NULL,
+    tag VARCHAR(50) NOT NULL,
+    FOREIGN KEY (spesa_id) REFERENCES spese(id),
+    FOREIGN KEY (tag) REFERENCES tags(nome)
+);
+
+INSERT INTO categorie (nome) VALUES ('Alimentari');
+INSERT INTO categorie (nome) VALUES ('Intrattenimento');
+INSERT INTO categorie (nome) VALUES ('Vacanze');
+INSERT INTO categorie (nome) VALUES ('Abbigliamento');
+INSERT INTO categorie (nome) VALUES ('Bollette');
+INSERT INTO categorie (nome) VALUES ('Altro');
+ 
+INSERT INTO tags (nome) VALUES ('Viaggio');
+INSERT INTO tags (nome) VALUES ('Cena');
+INSERT INTO tags (nome) VALUES ('Cinema');
+INSERT INTO tags (nome) VALUES ('Caffè');
+INSERT INTO tags (nome) VALUES ('Auto');
+INSERT INTO tags (nome) VALUES ('Benzina');
+INSERT INTO tags (nome) VALUES ('Treno');
+INSERT INTO tags (nome) VALUES ('Aereo');
+INSERT INTO tags (nome) VALUES ('Hotel');
+INSERT INTO tags (nome) VALUES ('Noleggio');
+INSERT INTO tags (nome) VALUES ('Elettronica');
+INSERT INTO tags (nome) VALUES ('Libri');
+INSERT INTO tags (nome) VALUES ('Musica');
+INSERT INTO tags (nome) VALUES ('Giochi');
+INSERT INTO tags (nome) VALUES ('Sport');
+INSERT INTO tags (nome) VALUES ('Palestra');
+INSERT INTO tags (nome) VALUES ('Luce');
+INSERT INTO tags (nome) VALUES ('Gas');
+ 
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Spesa al supermercato', 50.00, '2023-10-01', 'Alimentari');
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Cena al ristorante', 30.00, '2023-10-02', 'Altro');
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Biglietto del cinema', 10.00, '2023-10-03', 'Intrattenimento');
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Caffè al bar', 1.00, '2023-10-04', 'Alimentari');
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Benzina', 50.00, '2023-10-05', 'Altro');
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Biglietto del treno', 100.00, '2023-10-06', 'Vacanze');
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Biglietto aereo', 200.00, '2023-10-07', 'Vacanze');
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Noleggio auto', 50.00, '2023-10-08', 'Vacanze');
+ 
+
+INSERT INTO categorie (nome) VALUES ('Salute');
+ 
+INSERT INTO tags (nome) VALUES ('Medicina');
+INSERT INTO tags (nome) VALUES ('Visita Medica');
+ 
+INSERT INTO spese (info, importo, data, categoria) VALUES ('Acquisto farmaci', 50.00, '2023-11-03', 'Salute');
+ 
+SELECT id FROM spese ORDER BY id DESC LIMIT 1 AS id_esempio;
+ 
+INSERT INTO spese_tags (spesa_id, tag) VALUES (id_esempio, 'Medicina');
+INSERT INTO spese_tags (spesa_id, tag) VALUES (id_esempio, 'Visita Medica');
+
+UPDATE spese
+SET info = 'Nuova descrizione della spesa'
+WHERE id = id_esempio;
+ 
+UPDATE spese
+SET categoria = 'Altro'
+WHERE id = id_esempio
+ 
+UPDATE spese_tags
+SET tag = 'Libri'
+WHERE spesa_id = id_esempio AND tag = 'Medicina';
+ 
+ 
+UPDATE spese_tags
+SET tag = 'Libri', categoria = 'Altro', info = 'Nuova descrizione della spesa'
+WHERE spesa_id = id_esempio AND tag = 'Medicina';
+ 
+
+DELETE FROM spese_tags
+WHERE spesa_id = id_esempio;
+ 
+DELETE FROM spese
+WHERE id = id_esempio;
+
+DELETE FROM spese
+WHERE categoria = 'NomeCategoria';
+ 
+DELETE FROM categorie
+WHERE nome = 'NomeCategoria';
+
+DELETE FROM spese_tags
+WHERE tag = 'NomeTag';
+ 
+DELETE FROM tags
+WHERE nome = 'NomeTag';
+ 
+
+SELECT * FROM spese
+
+SELECT nome FROM categorie;
+
+SELECT info FROM spese;
+
+SELECT nome FROM tags;
+
+SELECT importo, data FROM spese;
+
+SELECT id FROM spese;
+
+SELECT * FROM categorie;
+
+SELECT data FROM spese;
+ 
+
+SELECT * FROM spese WHERE importo > 100;
+
+SELECT * FROM spese WHERE data = '2023-10-15';
+
+SELECT * FROM spese WHERE categoria = 'Alimentari';
+
+SELECT * FROM spese WHERE data < '2023-01-01';
+
+SELECT * FROM spese WHERE info LIKE '%ristorante%';
+
+SELECT spese.* FROM spese, spese_tags
+WHERE spese.id = spese_tags.spesa_id AND spese_tags.tag = 'Viaggio';
+
+SELECT * FROM spese WHERE utente_id = utente_id_esempio;
+ 
+
+SELECT * FROM spese
+WHERE data = '2023-03-02' AND categoria = 'Intrattenimento';
+
+SELECT spese.* FROM spese, spese_tags
+WHERE spese.id = spese_tags.spesa_id AND spese_tags.tag = 'Viaggio' AND spesa.categoria != 'Vacanze';
+
+SELECT * FROM spese
+WHERE importo > 50 AND data > '2023-01-01' AND categoria = 'Alimentari';
+
+(SELECT spese.* FROM spese, spese_tags, tags
+WHERE spese_tags.tag = tags.nome AND spese_tags.spesa_id = spese.id) AS mastro_misciu_bestia; -- ???
+
+SELECT * FROM spese
+WHERE importo > (SELECT AVG(importo) FROM spese);
+
+SELECT spese.* FROM spese, spese_tags
+WHERE spese.id = spese_tags.spesa_id AND spese_tags.tag = NULL;
